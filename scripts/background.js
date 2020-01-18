@@ -1,30 +1,37 @@
 chrome.commands.onCommand.addListener(onCommand);
 
-var search = null;
-
 function onCommand (command) {
   if(command === "execute_lucky_search"){
-    search = prompt();
-    if(search !== null)
-      chrome.tabs.create({ url: `https://www.google.com` }, fillInData );
+    var search = prompt();
+    if(search === null)
+      return;
+    
+    search = encodeURIComponent(search);
+    search = search.replace(/(%2B)+/g,"+");// replaces all spaces with a plus
+
+    var url = `https://www.google.com/search?q=${search}&btnI=I%27m+Feeling+Lucky`;
+
+    chrome.tabs.create({ url }, proceedWithSearch );
   }
 }
 
-function fillInData(tab){
-  let code = proceedWithSearch.toString().match(/function[^{]+\{([\s\S]*)\}$/)[1];
-  console.log("search ="+search);
-  code = code.replace("__user_query__",search);
-  chrome.tabs.executeScript(tab.id, {code: code});
+function proceedWithSearch(tab){
+
+  //get the body of the function to pass to API as string
+  let code = proceedWithSearchScript.toString().match(/function[^{]+\{([\s\S]*)\}$/)[1];
+  
+  chrome.tabs.executeScript(tab.id, {code});
 }
 
-function proceedWithSearch(){
+function proceedWithSearchScript(){
   
-  let inputs = document.forms[0].elements;
-
-  let searchField = inputs.namedItem("q");
-  searchField.value = "__user_query__";
+  //Google asks for confirmation to redirect
+  if(document.title === "Redirect Notice" || document.links.length == 2)
+    //click the first link on the page
+    document.links[0].click();
+  //google shows normal results page
+  else
+    //click the first google result
+    document.querySelector("h3.LC20lb").parentElement.click();
   
-  let submit = inputs.namedItem("btnI");
-  submit[1].click();
-
 }
