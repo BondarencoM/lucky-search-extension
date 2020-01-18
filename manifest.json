@@ -1,0 +1,29 @@
+{
+  "name": "Lucky Search",
+  "version": "1.0",
+  "description": "Follow the first Google result quicker",
+  "permissions": [
+    "activeTab",
+    "declarativeContent",
+    "https://www.google.com/"
+  ],
+  "background": {
+    "scripts": [ "scripts/background.js" ],
+    "persistent": false
+  },
+  "commands": {
+    "execute_lucky_search": {
+      "suggested_key": {
+        "default": "Alt+S"
+      },
+      "description": "Prompts for a search query and navigates to the first result (Feeling lucky)"
+    }
+  },
+  "icons": {
+    "16": "images/icon 16 .png",
+    "32": "images/icon 32 .png",
+    "48": "images/icon 48 .png",
+    "128": "images/icon 128 .png"
+  },
+  "manifest_version": 2
+}
